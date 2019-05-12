@@ -2,7 +2,7 @@ import json
 import judge_utils
 import os
 
-BRUTE = True
+BRUTE = True # 所有题把所有的exp和fix都试一遍
 
 
 def exec_python(cmd, pyver='python2'):
@@ -23,6 +23,10 @@ for i in questions:
             flags = exec_python(j['exploit'])
             for flag in flags.split('\n'):
                 if judge_utils.submit_flag(api_base, i, flag):
-                    print(f'攻击成功,flag为{flag}') #logger
-                    break #攻击成功
-            
+                    print(f'攻击成功,flag为{flag}')  # logger
+                    break  # 攻击成功
+            for i in j['fix']:
+                exec_python(i)
+                judge_utils.call_check(api_base, i)
+            judge_utils.update_check_info(api_base)
+            #if success: print('防御成功')

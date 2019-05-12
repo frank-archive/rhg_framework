@@ -2,6 +2,7 @@ import requests
 
 
 class Question:
+    chall_id: int
     def __init__(self, json):
         return
 
@@ -29,6 +30,24 @@ def submit_flag(api_base, q: Question, flag) -> bool:
     """
     return requests.post(
         api_base+"/sub_answer",
-        data={"answer": flag}
+        data={"answer": flag},
+        auth=('student07', '')
     ).json()['status'] == 1
 
+
+def call_check(api_base, q: Question) -> None:
+    '''
+    此函数用于请求对防御机进行check
+    一般无返回值
+    '''
+    requests.post(
+        api_base+'/call_question_check',
+        data={
+            "ChallengeID": q.chall_id
+        },
+        auth=('student07', '')
+    ).json()['status'] == 1
+    return
+
+def update_check_info(api_base):
+    return
