@@ -17,6 +17,13 @@
 
 exp**只应当**向STDOUT输出flag，多个flag间以"\n"间隔，**日志请输出到STDERR**
 
+### fix
+
+fix目录下为修复脚本，以popen形式执行。程序将接受一组参数，其描述如下：
+//TODO
+
+对于出现的漏洞，编写能够修复漏洞的脚本，不需要向STDOUT输出，日志请输出到STDERR
+
 ### recognizer
 
 recognizer用于识别题目中是否含有对应的漏洞，同样以popen的形式执行。程序将接受一组参数，其描述如下：  
