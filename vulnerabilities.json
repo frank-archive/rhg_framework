@@ -1,0 +1,16 @@
+{
+    "contest": "rhg2019",
+    "vuls": [
+        {
+            "comment": "",
+            "matcher": "recognizer/CVE_2016_3302.py",
+            "exploit": [
+                "exploit/CVE_2016_3302.py"
+            ],
+            "fix": [
+                "fix/CVE_2016_3302.py",
+                "fix/CVE_2016_3302.2.py"
+            ]
+        }
+    ]
+}

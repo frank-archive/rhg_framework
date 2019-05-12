@@ -1,0 +1,15 @@
+{
+    "contest": "rhg2019", //比赛名
+    "vuls": [ //比赛中出现的所有漏洞
+        {
+            "comment": "", //对漏洞的说明
+            "matcher": "recognizer/CVE_2016_10033.py", //漏洞指纹识别
+            "exploit": [ //攻击脚本
+                "exploit/CVE_2016_10033.py"
+            ],
+            "fix": [ //修复脚本
+                "fix/CVE_2016_10033.py"
+            ]
+        }
+    ]
+}
