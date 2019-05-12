@@ -1,5 +1,6 @@
 {
     "contest": "rhg2019",
+    "api_base": "https://172.16.4.1/api",
     "vuls": [
         {
             "comment": "",
