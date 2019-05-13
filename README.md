@@ -8,12 +8,14 @@
 * 框架应保证每个脚本能够独立执行，并且在框架中自动化执行时保留相同的行为
 * 避免/尽量不使用数据库，方便配置与修改
 * 做到解题步骤与评测机交互操作完全分离，使代码逻辑清晰
+* 赛前准备时只需要上传与修改脚本即可，不需要过多修改配置
 
-## 比赛中需要修改的文件:
+
+## 比赛前/中需要修改的文件:
 
 |文件名|说明|
 |:-:|:-:|
-|config.json|请按照config_comment.jsonc的说明进行修改|
+|config.json|请按照config_comment.jsonc的说明进行修改**非必要时不必修改**|
 |judge_utils.py|修改提交flag，调用心跳等接口的实现细节|
 |exploit/*.py|编写config.json中提到的exp，**请务必不要在stdout中输出不是flag的内容**|
 
@@ -40,3 +42,12 @@ recognizer用于识别题目中是否含有对应的漏洞，同样以popen的�
 
 对于每个可能出现的漏洞，都应当编写一个recognizer，并且填写到config.json中  
 **在题目可能含有对应漏洞时STDOUT中应当含有vulnerable字样，没有时*不应*含有vulnerable**
+
+### logs
+
+脚本运行生成的日志。对于每个脚本有单独的日志，也有合并的日志。  
+//TODO
+
+### static
+
+用于上传exp, fix, recognizer等脚本的网页前端
