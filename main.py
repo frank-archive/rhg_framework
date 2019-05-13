@@ -5,7 +5,9 @@ import threading
 
 BRUTE = False  # 所有题把所有的exp和fix都试一遍
 DEBUG = True
-config = json.load(open('config.json', 'r'))
+config = None
+with open('config.json', 'r') as f:
+    config = json.loads(f.read())
 api_base = config['api_base']
 vuls = config['vuls']
 reset_defend_after_fail = config['reset_env_after_fail_attempt']['defend']
