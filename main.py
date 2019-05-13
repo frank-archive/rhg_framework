@@ -46,11 +46,11 @@ def try_fix(question, vul):
 if __name__ == '__main__':
     questions = judge_utils.get_questions(api_base)
     for i in questions:
-        for j in vuls:
-            if not BRUTE and 'vulnerable' in exec_python(j['matcher'], json.dumps(i)):
+        for j in vuls.keys():
+            if not BRUTE and 'vulnerable' in exec_python(config['vuls'][j]['matcher'], json.dumps(i)):
                 if not DEBUG:
-                    threading.Thread(try_exploit, args=(i, j)).start()
-                    threading.Thread(try_fix, args=(i, j)).start()
+                    threading.Thread(try_exploit, args=(i, config['vuls'][j])).start()
+                    threading.Thread(try_fix, args=(i, config['vuls'][j])).start()
                 else:
-                    try_exploit(i, j)
-                    try_fix(i, j)
+                    try_exploit(i, config['vuls'][j])
+                    try_fix(i, config['vuls'][j])
