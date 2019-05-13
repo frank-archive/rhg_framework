@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "exploit"
+		},
+		{
+			"path": "recognizer"
+		},
+		{
+			"path": "fix"
+		}
+	],
+	"settings": {}
+}
