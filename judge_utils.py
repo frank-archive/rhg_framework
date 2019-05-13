@@ -3,6 +3,7 @@ import requests
 
 class Question:
     chall_id: int
+
     def __init__(self, json):
         return
 
@@ -35,7 +36,7 @@ def submit_flag(api_base, q: Question, flag) -> bool:
     ).json()['status'] == 1
 
 
-def call_check(api_base, q: Question) -> None:
+def call_defend_check(api_base, q: Question) -> None:
     '''
     此函数用于请求对防御机进行check
     一般无返回值
@@ -49,5 +50,44 @@ def call_check(api_base, q: Question) -> None:
     ).json()['status'] == 1
     return
 
-def update_check_info(api_base):
+
+def is_defend_success(api_base, q: Question) -> bool:
+    '''
+    此函数用于判断一道题是否防御成功
+    返回布尔值表示是否防御成功
+    '''
+    requests.get(
+        api_base+'/get_check_info',
+        auth=('student07', '')
+    ).json()['check_status']
     return
+
+
+def reset_defend_env(api_base, q: Question):
+    '''
+    此函数用于重置题目防御环境
+    在config.json中配置是否每次防御失败后都调用
+    '''
+    requests.post(
+        api_base+'/reset_question',
+        data={
+            'ChallengeID': q.chall_id,
+            'type': 2
+        },
+        auth=('student07', '')
+    )
+
+
+def reset_attack_env(api_base, q: Question):
+    '''
+    用于重置攻击环境
+    config.json中配置
+    '''
+    requests.post(
+        api_base+'/reset_question',
+        data={
+            'ChallengeID': q.chall_id,
+            'type': 2
+        },
+        auth=('student07', '')
+    )

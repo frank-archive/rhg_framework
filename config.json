@@ -1,6 +1,10 @@
 {
     "contest": "rhg2019",
     "api_base": "https://172.16.4.1/api",
+    "reset_env_after_fail_attempt":{
+        "attack": false,
+        "defend": false
+    },
     "vuls": [
         {
             "comment": "",

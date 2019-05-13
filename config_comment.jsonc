@@ -1,6 +1,10 @@
 {
     "contest": "rhg2019", //比赛名
     "api_base": "https://172.16.4.1/api", //必须是http[s]://开头，不尾随"/"的
+    "reset_env_after_fail_attempt":{ //是否在攻击/防御失败后重置环境
+        "attack": false,
+        "defend": false
+    },
     "vuls": [ //比赛中出现的所有漏洞
         {
             "comment": "", //对漏洞的说明
