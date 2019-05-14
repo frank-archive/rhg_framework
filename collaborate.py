@@ -25,20 +25,23 @@ def index():
 def vuls_index():
     return render_template(
         'vuls_index.html',
+        vul_list=config['vuls'].keys()
     )
 
 
 @app.route('/vuls/<name>')
 def vul_detail(name):
+    if(name not in config['vuls'].keys()):
+        return '漏洞不存在'
     return render_template(
         'vul_detail.html',
-        vul_list=config['vuls'].keys()
+        vul_name=name
     )
 
 
 @app.route('/vuls/<name>/create')
 def vuls_create(name):
-    if name in [i['name'] for i in config['vuls']]:
+    if name in config['vuls'].keys():
         return '已存在名为'+name+'的漏洞'+back_button
     config['vuls'][name] = {
         'matcher': [],
@@ -69,4 +72,4 @@ def vuls_upload(vul_name, directory, script_name, methods=['POST']):
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', debug=False, port=80)
+    app.run('0.0.0.0', debug=True, port=80)

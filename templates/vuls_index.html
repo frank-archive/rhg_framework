@@ -1,5 +1,49 @@
 <!DOCTYPE html>
+<style>
+
+</style>
+
 <body>
     <!--./vuls/<name>/create: 创建新的漏洞条目-->
     <!--./vuls/<name>/upload/<directory>/<script_name>: 上传相应脚本-->
+    <label>创建新的漏洞条目</label>
+    <div class="new_vulnerability">
+        <input class="vul_name_new" placeholder="漏洞名">
+        <button onclick="addVul(
+            document.querySelector('.vul_name_new').value)
+        ">添加</button>
+    </div>
+
+    <label>或选择一个漏洞条目</label>
+    <div class="select_vulnerability">
+        <select class="vul_name">
+            <option value="-1">select vulnerable</option>
+            {% for v in vul_list %}
+            <option value="{{ v }}">{{ v }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+    <div class="vul_page"></div>
+
+    <script>
+        function addVul(v) {
+            window.location.href = '/vuls/' + v + '/create';
+        }
+
+        const vul_select = document.querySelector('.vul_name');
+        vul_select.addEventListener(
+            'change', async (e) => {
+                const vul_page = document.querySelector('.vul_page');
+                if (e.target.value == '-1') return;
+                await fetch('./vuls/' + e.target.value)
+                    .then(response => {
+                        response.text().then((s) => {
+                            vul_page.innerHTML = s;
+                        })
+                    });
+            }
+        )
+    </script>
 </body>
