@@ -19,26 +19,35 @@
 |judge_utils.py|修改提交flag，调用心跳等接口的实现细节|
 |exploit/*.py|编写config.json中提到的exp，**请务必不要在stdout中输出不是flag的内容**|
 
+## 使用说明
+
+赛前可在内网起一个小网页`python3 collaborate.py`来整理脚本  
+比赛前在robot机上只需要执行`python3 main.py`启动即可  
+请保证所有依赖都装好，框架自身没有依赖。  
+每个脚本的行为应符合以下说明
+
 ## 对各部分的说明
 
 ### exploit
 
-对所有的exp，都将以popen的形式进行执行。程序将接受一组参数，其描述如下：  
-//TODO
+对所有的exp，都将以popen的形式进行执行。程序将从STDIN获取到题目的相关信息。  
+一般来说，题目信息以JSON的格式给出
+
+> 注：此处考虑到每次比赛题目的形式可能不一样，故没有给出题目的具体结构
 
 exp**只应当**向STDOUT输出flag，多个flag间以"\n"间隔，**日志请输出到STDERR**
 
 ### fix
 
-fix目录下为修复脚本，以popen形式执行。程序将接受一组参数，其描述如下：
-//TODO
+fix目录下为修复脚本，以popen形式执行。  
+程序将从STDIN获取到题目相关信息, 与exp获取到的信息相同
 
 对于出现的漏洞，编写能够修复漏洞的脚本，不需要向STDOUT输出，日志请输出到STDERR
 
 ### recognizer
 
-recognizer用于识别题目中是否含有对应的漏洞，同样以popen的形式执行。程序将接受一组参数，其描述如下：  
-//TODO
+recognizer用于识别题目中是否含有对应的漏洞，同样以popen的形式执行。  
+程序将从STDIN获取到题目相关信息, 与exp获取到的信息相同
 
 对于每个可能出现的漏洞，都应当编写一个recognizer，并且填写到config.json中  
 **在题目可能含有对应漏洞时STDOUT中应当含有vulnerable字样，没有时*不应*含有vulnerable**
