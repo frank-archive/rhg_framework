@@ -35,7 +35,10 @@ def vul_detail(name):
         return '漏洞不存在'
     return render_template(
         'vul_detail.html',
-        vul_name=name
+        vul_name=name,
+        exp_list=config['vuls'][name]['exploit'],
+        fix_list=config['vuls'][name]['fix'],
+        matcher=config['vuls'][name]['matcher']
     )
 
 
@@ -69,6 +72,14 @@ def vuls_upload(vul_name, directory, script_name, methods=['POST']):
     config['vuls'][vul_name][directory].append(directory+'/'+script_name)
     update_config()
     return 'saved to '+directory+'/'+fn+back_button
+
+
+@app.route('/pyrender/<directory>/<script>')
+def render(directory, script):
+    if directory not in ['exploit', 'fix', 'recognizer']:
+        return ''
+    with open(directory+'/'+secure_filename(script), 'r') as f:
+        return render_template('pyrender.html', code=f.read())
 
 
 if __name__ == '__main__':

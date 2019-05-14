@@ -1,2 +1,21 @@
 <h4>{{ vul_name }}</h4>
 
+<label>漏洞点目前包含以下脚本:</label>
+<div class="script_details">
+    <label>攻击脚本</label>
+    <ul>
+        {% for i in exp_list %}
+        <li><a href="/pyrender/{{ i }}">{{ i }}</a></li>
+        {% endfor %}
+    </ul>
+    <label>修复脚本</label>
+    <ul>
+        {% for i in fix_list %}
+        <li><a href="/pyrender/{{ i }}">{{ i }}</a></li>
+        {% endfor %}
+    </ul>
+    <label>识别脚本</label>
+    <ul>
+        <li><a href="/pyrender/{{ matcher }}">{{ matcher }}</a></li>
+    </ul>
+</div>

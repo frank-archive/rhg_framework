@@ -6,14 +6,13 @@
         "defend": false
     },
     "vuls": {
-        "CVE_2016_3302": {
-            "matcher": "recognizer/CVE_2016_3302.py",
+        "CVE_2016_10033": {
+            "matcher": "recognizer/CVE_2016_10033.py",
             "exploit": [
-                "exploit/CVE_2016_3302.py"
+                "exploit/CVE_2016_10033.py"
             ],
             "fix": [
-                "fix/CVE_2016_3302.py",
-                "fix/CVE_2016_3302.2.py"
+                "fix/CVE_2016_10033.py"
             ]
         }
     }
