@@ -55,8 +55,8 @@ def vuls_create(name):
     return '添加成功'+back_button
 
 
-@app.route('/vuls/<vul_name>/upload/<directory>', )
-def vuls_upload(vul_name, directory, methods=['POST']):
+@app.route('/vuls/<vul_name>/upload/<directory>', methods=['POST'])
+def vuls_upload(vul_name, directory):
     if 'file' not in request.files or request.files['file'].filename == '':
         return '上传内容为空'
     file = request.files['file']

@@ -24,13 +24,13 @@
 
     <div align="center">
         <form role="form">
-            <div class="from-grope">
+            <div class="form-group">
                 <label for="loopholeName" style="clear: both">
                     <h3>创建新的漏洞条目</h3>
                 </label>
                 <input class="form-control" placeholder="请输入漏洞名称" id="loopholeName" style="width: 400px">
                 <button class="btn btn-default" style="margin-top: 10px"
-                        onclick="addVul(document.querySelector('.vul_name_new').value)">
+                        onclick="window.location.href = '/vuls/' + document.querySelector('.vul_name_new').value + '/create'">
                     添加
                 </button>
             </div>
@@ -49,14 +49,16 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="vul_page"></div>
         </form>
     </div>
 
         <br>
 
-        {% for i in ['exp', 'fix', 'recognizer'] %}
+        {% for i in ['exploit', 'fix', 'recognizer'] %}
             <div style="width: 350px">
-                <form method="post" class="upload_{{ i }}" role="form" enctype="multipart/form-data">
+                <form method="post" class="upload_{{ i }}" role="form" enctype="multipart/form-data"
+                        onsubmit="return validateActionURL()">
                     <div style="clear: both">
                         <input class="btn btn-default" name="file" type="file" accept=".py" style="width: 200px;height: 35px;float: left">
                         <input class="form-control btn btn-primary" type="submit" value="上传新{{ i }}"
@@ -86,22 +88,27 @@
 
 
 <script>
-    function addVul(v) {
-        window.location.href = '/vuls/' + v + '/create';
+    var isActionSet = false;
+    function validateActionURL() {
+        return isActionSet;
     }
-
-    const vul_select = document.querySelector('.vul_name');
+    const vul_select = document.querySelector('select.form-control');
     vul_select.addEventListener(
         'change', async (e) => {
             const vul_page = document.querySelector('.vul_page');
-            if (e.target.value == '-1') return;
+            if (e.target.value == '-1') {
+                isActionSet = false;
+                vul_page.innerHTML = "";
+                return;
+            }
+            isActionSet = true;
             await fetch('./vuls/' + e.target.value)
                 .then(response => {
                     response.text().then((s) => {
                         vul_page.innerHTML = s;
                     })
                 });
-            {% for i in ['exp', 'fix', 'recognizer'] %}
+            {% for i in ['exploit', 'fix', 'recognizer'] %}
                 fileupload_{{ i }}.action = '/vuls/' + e.target.value + '/upload/{{i}}';
             {% endfor %}
         }
