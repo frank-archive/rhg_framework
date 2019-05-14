@@ -18,20 +18,20 @@ def update_config():
 @app.route('/')
 @app.route('/index.html')
 def index():
-    return render_template('static/index.html', time=time.asctime())
+    return render_template('index.html', time=time.asctime())
 
 
 @app.route('/vuls')
 def vuls_index():
     return render_template(
-        'static/vuls_index.html',
+        'vuls_index.html',
     )
 
 
 @app.route('/vuls/<name>')
 def vul_detail(name):
     return render_template(
-        'static/vul_detail.html',
+        'vul_detail.html',
         vul_list=config['vuls'].keys()
     )
 
