@@ -55,23 +55,21 @@ def vuls_create(name):
     return '添加成功'+back_button
 
 
-@app.route('/vuls/<vul_name>/upload/<directory>/<script_name>', )
-def vuls_upload(vul_name, directory, script_name, methods=['POST']):
-    '''
-    POST {
-        "script": the script to save
-    }
-    '''
-    if(len(script_name) == 0):
-        return '文件名为空'
+@app.route('/vuls/<vul_name>/upload/<directory>', )
+def vuls_upload(vul_name, directory, methods=['POST']):
+    if 'file' not in request.files or request.files['file'].filename == '':
+        return '上传内容为空'
+    file = request.files['file']
+    if file.filename[-3:] != '.py':
+        return '上传python脚本'
     if directory not in ['exploit', 'fix', 'recognizer']:
         return ''  # maybe hack
-    fn = secure_filename(script_name)
-    with open(directory+'/'+fn, 'w') as f:
-        f.write(request.form['script'])
-    config['vuls'][vul_name][directory].append(directory+'/'+script_name)
+    if vul_name not in config['vuls'].keys():
+        return '没有此漏洞条目'
+    file.save(directory+'/'+secure_filename(file.filename))
+    config['vuls'][vul_name][directory].append(directory+'/'+secure_filename(file.filename))
     update_config()
-    return 'saved to '+directory+'/'+fn+back_button
+    return 'saved to '+directory+'/'+secure_filename(file.filename)+back_button
 
 
 @app.route('/pyrender/<directory>/<script>')

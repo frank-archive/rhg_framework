@@ -27,6 +27,16 @@
 
     <div class="vul_page"></div>
 
+    {% for i in ['exp', 'fix', 'recognizer'] %}
+    <form method="post" class="upload_{{i}}" enctype="multipart/form-data">
+        <input name="file" type="file" accept=".py" />
+        <input type="submit" value="上传新{{i}}" />
+    </form>
+    <br>
+    <script>const fileupload_{{i}} = document.querySelector('.upload_{{i}}');</script>
+    {% endfor %}
+    注: 新的recognizer会覆盖原先的识别脚本
+
     <script>
         function addVul(v) {
             window.location.href = '/vuls/' + v + '/create';
@@ -43,6 +53,9 @@
                             vul_page.innerHTML = s;
                         })
                     });
+                {% for i in ['exp', 'fix', 'recognizer'] %}
+                fileupload_{{ i }}.action = '/vuls/' + e.target.value + '/upload/{{i}}';
+                {% endfor %}
             }
         )
     </script>
