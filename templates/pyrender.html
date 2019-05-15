@@ -1,11 +1,46 @@
-<!DOCTYPE html>
-
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Document</title>
+    <!-- 引入codemirror 外部基本资源js css -->
+    <link rel="stylesheet" href="/static/css/codemirror.css">
+    <script src="/static/js/codemirror.js"></script>
+    <!-- 引入mode  此处为js mode-->
+    <script src="/static/js/python.js"></script>
+
+    <script src="/static/js/vim.js"></script>
+    <link rel="stylesheet" href="/static/css/show-hint.css">
+    <link rel="stylesheet" href="/static/css/blackboard.css">
+    <script src="/static/js/show-hint.js"></script>;
 </head>
 <body>
-    <script>hljs.initHighlightingOnLoad();</script>
-    <pre><code class="python">{{ code }}</code></pre>
+<h1 style="text-align: center; color: #ff0000;">脚本内容</h1>
+<br>
+<div style="width: 1200px; margin: 0 auto; font-size: 20px">
+    <form>
+        <textarea id="myTextarea">{{ code }}</textarea>
+    </form>
+</div>
+
 </body>
+</html>
+<script>
+
+    // 创建实例  这种方法在options 里写value属性是没有用的，自3.0版本改掉了
+    // 对于生成实例的步骤，react用户注意，要在真实dom生成之后再调用
+    const myTextarea = document.getElementById('myTextarea')
+    const editor = CodeMirror.fromTextArea(myTextarea, {
+        lineNumbers: true,
+        mode: 'python', // 设置mode 对应的也要这之前引入相应的js
+        theme: 'blackboard',
+        extraKeys: {"Tab": "autocomplete"},
+        setSize: '1200px 800px',
+    });
+
+
+</script>
