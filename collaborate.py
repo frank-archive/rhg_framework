@@ -74,7 +74,7 @@ def vuls_upload(vul_name, directory):
 
 @app.route('/run')
 def run_index():
-    return ''
+    return render_template('run_index.html')
 
 
 @app.route('/pyrender/<directory>/<script>')
