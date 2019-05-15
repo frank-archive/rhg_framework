@@ -30,8 +30,9 @@ log.addHandler(logging.FileHandler(
 ))
 
 
-def exec_python(cmd, json_arg: str, pyver='python2'):
-    process = subprocess.run([pyver+' '+cmd], input=json_arg.encode())
+def exec_python(cmd, json_arg: str, pyver='python3'):
+    log.debug(f"执行{cmd}文件")
+    process = subprocess.run([pyver, cmd], input=json_arg.encode())
     return process.stdout.decode(), process.stderr.decode()
 
 
@@ -73,7 +74,7 @@ if __name__ == '__main__':
     for i in questions:
         log.debug("题目信息:"+json.dumps(i, indent=4, sort_keys=True))
         for j in vuls.keys():
-            if not BRUTE and 'vulnerable' in exec_python(config['vuls'][j]['matcher'], json.dumps(i)):
+            if not BRUTE and 'vulnerable' in exec_python(config['vuls'][j]['matcher'], json.dumps(i))[1]:
                 if not DEBUG:
                     threading.Thread(try_exploit, args=(
                         i, config['vuls'][j])).start()
