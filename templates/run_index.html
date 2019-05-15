@@ -8,15 +8,52 @@
 </head>
 
 <body>
-    <div align="left">
+    <br><br>
+    <div align="center">
         <input class="btn btn-success" type="button" value="启动主脚本" onclick="loadMain()">
         <input class="btn" type="button" value="测试脚本" onclick="debugScript()">
     </div>
-
-    <div class="run_log"></div>
+    <br><br>
+    <div class="run_log" style="width: 60%;margin: 0 auto;" hidden>
+        <div class="panel panel-default">
+            <div class="panel-heading">详细日志</div>
+            <div class="panel-body log_all"></div>
+        </div>
+    </div>
+    <div class="stop_btn" style="width: 60%;margin: 0 auto;" hidden>
+        <input type="button" class="btn btn-warning" value="停止">
+    </div>
     <script>
-        function loadMain() {
-
+        const log_frame = document.querySelector('.run_log');
+        const stop_btn = document.querySelector('.stop_btn');
+        async function loadMain() {
+            var flag = false;
+            await fetch('/run/main/start').then(async resp => {
+                await resp.text().then(text => {
+                    if (text == "success") {
+                        alert('脚本已启动');
+                        flag = true;
+                    }
+                    else
+                        alert('有点什么问题emmmm\n' + text);
+                })
+            })
+            if (!flag) return;
+            stop_btn.hidden = false;
+            log_frame.hidden = false;
+            var i = setInterval(async function () {
+                await fetch('/run/log/main').then(resp => {
+                    resp.text().then(text => {
+                        document.querySelector('.log_all').innerHTML += text;
+                    })
+                })
+            }, 1000);
+            stop_btn.addEventListener('click', async function stopRetrieve() {
+                clearInterval(i);
+                stop_btn.hidden = true;
+                stop_btn.removeEventListener('click', stopRetrieve);
+                await fetch('/run/main/stop');
+            });
         }
         function debugScript() {
 

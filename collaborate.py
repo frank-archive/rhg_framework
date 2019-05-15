@@ -2,6 +2,7 @@ from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
 import json
 import time
+import subprocess
 
 app = Flask(__name__)
 
@@ -67,7 +68,8 @@ def vuls_upload(vul_name, directory):
     if vul_name not in config['vuls'].keys():
         return '没有此漏洞条目'
     file.save(directory+'/'+secure_filename(file.filename))
-    config['vuls'][vul_name][directory].append(directory+'/'+secure_filename(file.filename))
+    config['vuls'][vul_name][directory].append(
+        directory+'/'+secure_filename(file.filename))
     update_config()
     return 'saved to '+directory+'/'+secure_filename(file.filename)+back_button
 
@@ -75,6 +77,41 @@ def vuls_upload(vul_name, directory):
 @app.route('/run')
 def run_index():
     return render_template('run_index.html')
+
+
+log_queue = []
+process = None
+@app.route('/run/<target>/<action>')
+def run_target(target, action):
+    global log_queue, process
+    if target == 'main':
+        if action == 'start':
+            if process is not None and isinstance(process, subprocess.Popen):
+                process.kill()
+            process = subprocess.Popen(['python3', 'main.py'],
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE)
+            log_queue = []
+            log_queue.append(process.communicate()[1].decode())
+            return 'success'
+        elif action == 'stop':
+            process.kill()
+            process = None
+            return 'success'
+        else:
+            return 'wrong action'
+    return '? not implemented'
+
+
+@app.route('/run/log/<name>')
+def log(name):
+    global log_queue
+    if len(log_queue) > 0:
+        ret = ''
+        while len(log_queue) > 0:
+            ret += log_queue.pop(0)
+        return ret.replace('\n', '<br>').replace(' ', '&nbsp;')
+    return ''
 
 
 @app.route('/pyrender/<directory>/<script>')
