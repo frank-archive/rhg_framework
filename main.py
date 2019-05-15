@@ -29,7 +29,6 @@ log.addHandler(logging.FileHandler(
     'logs/main.log'
 ))
 
-
 def exec_python(cmd, json_arg, pyver='python2'):
     process = subprocess.run([
         pyver+' '+cmd,
@@ -46,13 +45,13 @@ def try_exploit(question, vul):
             f.write(exp_log)
         for flag in flags.split('\n'):
             if flag in correct_flags:
-                log.debug(f'已经提交过{flag}')
+                log.warning(f'已经提交过{flag}')
                 continue
             if judge_utils.submit_flag(api_base, question, flag):
                 log.info(f'题目{question}攻击成功,flag为{flag}')  # logger
                 correct_flags.append(flag)
             else:
-                log.debug(f'{flag[:10]}...答案错误')
+                log.warning(f'{flag[:10]}...答案错误')
 
 
 def try_fix(question, vul):
@@ -72,7 +71,9 @@ def try_fix(question, vul):
 
 if __name__ == '__main__':
     questions = judge_utils.get_questions(api_base)
+    log.info(f"获取了{len(questions)}道题目")
     for i in questions:
+        log.debug("题目信息:"+json.dumps(i, indent=4, sort_keys=True))
         for j in vuls.keys():
             if not BRUTE and 'vulnerable' in exec_python(config['vuls'][j]['matcher'], json.dumps(i)):
                 if not DEBUG:
