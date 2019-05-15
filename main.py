@@ -29,18 +29,16 @@ log.addHandler(logging.FileHandler(
     'logs/main.log'
 ))
 
-def exec_python(cmd, json_arg, pyver='python2'):
-    process = subprocess.run([
-        pyver+' '+cmd,
-        json_arg
-    ])
+
+def exec_python(cmd, json_arg: str, pyver='python2'):
+    process = subprocess.run([pyver+' '+cmd], input=json_arg.encode())
     return process.stdout.decode(), process.stderr.decode()
 
 
 def try_exploit(question, vul):
     for exp in vul['exploit']:
         log.debug(f'开始尝试利用脚本{exp}进行攻击')
-        flags, exp_log = exec_python(exp, question)
+        flags, exp_log = exec_python(exp, json.dumps(question))
         with open(f'logs/{exp.replace("/", "_")}', 'w') as f:
             f.write(exp_log)
         for flag in flags.split('\n'):

@@ -1,11 +1,6 @@
 from wordpress_utils import get_wordpress_version
-import argparse
+import json
 
-p = argparse.ArgumentParser()
-p.add_argument('--url', '-u', type=str)
-args = p.parse_args()
+url = json.loads(input())['url']
 
-
-print('vulnerable' if get_wordpress_version(
-    args.url
-) == "4.6" else '')
+print('vulnerable' if get_wordpress_version(url) == "4.6" else '')
