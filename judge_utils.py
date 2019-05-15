@@ -1,6 +1,6 @@
 import requests
 
-def get_questions(api_base) -> list(dict):
+def get_questions(api_base) -> list:
     """
     此函数将调用比赛的获取题目信息接口并解析
     返回题目列表

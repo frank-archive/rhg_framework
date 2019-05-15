@@ -1,9 +1,10 @@
 import json
-import judge_utils
+import sys
 import subprocess
 import threading
 import logging
-import coloredlogs, logging
+import judge_utils
+import coloredlogs
 
 BRUTE = False  # 所有题把所有的exp和fix都试一遍
 DEBUG = True
@@ -24,18 +25,25 @@ coloredlogs.install(
     logger=log,
     fmt='%(asctime)s [%(process)d-%(filename)s] %(levelname)s %(message)s'
 )
+log.addHandler(logging.FileHandler(
+    'logs/main.log'
+))
+
 
 def exec_python(cmd, json_arg, pyver='python2'):
-    return subprocess.run([
+    process = subprocess.run([
         pyver+' '+cmd,
         json_arg
-    ]).stdout.decode()
+    ])
+    return process.stdout.decode(), process.stderr.decode()
 
 
 def try_exploit(question, vul):
     for exp in vul['exploit']:
         log.debug(f'开始尝试利用脚本{exp}进行攻击')
-        flags = exec_python(exp, question)
+        flags, exp_log = exec_python(exp, question)
+        with open(f'logs/{exp.replace("/", "_")}', 'w') as f:
+            f.write(exp_log)
         for flag in flags.split('\n'):
             if flag in correct_flags:
                 log.debug(f'已经提交过{flag}')
@@ -50,7 +58,11 @@ def try_exploit(question, vul):
 def try_fix(question, vul):
     for i in vul['fix']:
         log.debug(f'开始尝试利用脚本{i}修复漏洞点')
-        exec_python(i, json.dumps(question))
+        stdout, fix_log = exec_python(i, json.dumps(question))
+        with open(f'logs/{i.replace("/", "_")}', 'w') as f:
+            f.write(fix_log)
+        if(stdout != ""):
+            log.debug(f"修复脚本{i}输出了:\nBEGIN_STDOUT\n{stdout}\nEND_STDOUT")
         judge_utils.call_defend_check(api_base, question)
         if judge_utils.is_defend_success(api_base, question):
             log.info(f'题目{question}防御成功')
@@ -64,8 +76,10 @@ if __name__ == '__main__':
         for j in vuls.keys():
             if not BRUTE and 'vulnerable' in exec_python(config['vuls'][j]['matcher'], json.dumps(i)):
                 if not DEBUG:
-                    threading.Thread(try_exploit, args=(i, config['vuls'][j])).start()
-                    threading.Thread(try_fix, args=(i, config['vuls'][j])).start()
+                    threading.Thread(try_exploit, args=(
+                        i, config['vuls'][j])).start()
+                    threading.Thread(try_fix, args=(
+                        i, config['vuls'][j])).start()
                 else:
                     try_exploit(i, config['vuls'][j])
                     try_fix(i, config['vuls'][j])
