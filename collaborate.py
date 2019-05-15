@@ -47,7 +47,7 @@ def vuls_create(name):
     if name in config['vuls'].keys():
         return '已存在名为'+name+'的漏洞'+back_button
     config['vuls'][name] = {
-        'matcher': [],
+        'matcher': "",
         'exploit': [],
         'fix': []
     }
@@ -70,6 +70,11 @@ def vuls_upload(vul_name, directory):
     config['vuls'][vul_name][directory].append(directory+'/'+secure_filename(file.filename))
     update_config()
     return 'saved to '+directory+'/'+secure_filename(file.filename)+back_button
+
+
+@app.route('/run')
+def run_index():
+    return ''
 
 
 @app.route('/pyrender/<directory>/<script>')
