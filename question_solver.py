@@ -79,9 +79,9 @@ def solve(i):
         if not BRUTE and 'vulnerable' in recon_output:
             log.info('找到了可能的漏洞点')
             if not DEBUG:
-                threading.Thread(try_exploit, args=(
+                threading.Thread(target=try_exploit, args=(
                     i, config['vuls'][j])).start()
-                threading.Thread(try_fix, args=(
+                threading.Thread(target=try_fix, args=(
                     i, config['vuls'][j])).start()
             else:
                 try_exploit(i, config['vuls'][j])
