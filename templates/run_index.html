@@ -14,6 +14,9 @@
         <input class="btn" type="button" value="测试脚本" onclick="debugScript()">
     </div>
     <br><br>
+    <div class="panel" style="width: 60%;margin: 0 auto;" hidden>
+
+    </div>
     <div class="run_log" style="width: 60%;margin: 0 auto;" hidden>
         <div class="panel panel-default">
             <div class="panel-heading">详细日志</div>
@@ -25,9 +28,13 @@
     </div>
     <script>
         const log_frame = document.querySelector('.run_log');
+        const log_content = document.querySelector('.log_all');
         const stop_btn = document.querySelector('.stop_btn');
+        const panel = document.querySelector('.panel')
         async function loadMain() {
             var flag = false;
+            log_content.innerHTML = "";
+            panel.hidden = true;
             await fetch('/run/main/start').then(async resp => {
                 await resp.text().then(text => {
                     if (text == "success") {
@@ -42,9 +49,9 @@
             stop_btn.hidden = false;
             log_frame.hidden = false;
             var i = setInterval(async function () {
-                await fetch('/run/log/main').then(resp => {
+                await fetch('/run/main/log').then(resp => {
                     resp.text().then(text => {
-                        document.querySelector('.log_all').innerHTML += text;
+                        log_content.innerHTML += text;
                     })
                 })
             }, 1000);
@@ -55,8 +62,13 @@
                 await fetch('/run/main/stop');
             });
         }
-        function debugScript() {
-
+        async function debugScript() {
+            await fetch('/run/panel/show').then(resp=>{
+                resp.text().then(text=>{
+                    panel.hidden= false;
+                    panel.innerHTML = text;
+                })
+            })
         }
     </script>
 </body>

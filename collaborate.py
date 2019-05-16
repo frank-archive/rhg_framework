@@ -3,6 +3,7 @@ from werkzeug.utils import secure_filename
 import json
 import time
 import subprocess
+import threading
 
 app = Flask(__name__)
 
@@ -81,37 +82,61 @@ def run_index():
 
 log_queue = []
 process = None
+log_thread = None
+
+
+def start_py_with_log(pyfile):
+    global process, log_queue, log_thread
+    if process is not None and isinstance(process, subprocess.Popen):
+        process.kill()
+    process = subprocess.Popen(['python3', pyfile],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+    log_queue = []
+    log_thread = threading.Thread(target=write_log)
+    log_thread.start()
+
+
+def write_log():
+    global log_queue, process
+    while process.returncode == None:
+        log_queue.append(process.communicate()[1].decode())
+        time.sleep(1)
+    try:
+        log_queue.append(process.communicate()[1].decode())
+    except:
+        None
+    log_queue.append('process finished')
+
+
 @app.route('/run/<target>/<action>')
 def run_target(target, action):
-    global log_queue, process
+    global process, log_thread
     if target == 'main':
         if action == 'start':
-            if process is not None and isinstance(process, subprocess.Popen):
-                process.kill()
-            process = subprocess.Popen(['python3', 'main.py'],
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE)
-            log_queue = []
-            log_queue.append(process.communicate()[1].decode())
+            start_py_with_log('main.py')
             return 'success'
         elif action == 'stop':
             process.kill()
+            if log_thread.is_alive():
+                log_thread.join()
+            log_thread = None
             process = None
             return 'success'
+        elif action == 'log':
+            if len(log_queue) > 0:
+                ret = ''
+                while len(log_queue) > 0:
+                    ret += log_queue.pop(0)
+                return ret.replace('\n', '<br>').replace(' ', '&nbsp;')
+            return ''
         else:
             return 'wrong action'
-    return '? not implemented'
+    elif target == 'panel':
+        if action == 'show':
+            return 'not implemented yet'  # run_panel.html
+    return 'error target'
 
-
-@app.route('/run/log/<name>')
-def log(name):
-    global log_queue
-    if len(log_queue) > 0:
-        ret = ''
-        while len(log_queue) > 0:
-            ret += log_queue.pop(0)
-        return ret.replace('\n', '<br>').replace(' ', '&nbsp;')
-    return ''
 
 
 @app.route('/pyrender/<directory>/<script>', methods=['GET', 'POST'])
