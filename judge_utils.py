@@ -1,6 +1,14 @@
 import requests
 import json
 
+
+def describe_question(question) -> str:
+    """
+    此函数用于简单描述一道题目，用于日志输出
+    """
+    return str(question['challengeID'])
+
+
 def get_questions(api_base) -> list:
     """
     此函数将调用比赛的获取题目信息接口并解析
