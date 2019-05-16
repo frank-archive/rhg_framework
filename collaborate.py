@@ -114,12 +114,17 @@ def log(name):
     return ''
 
 
-@app.route('/pyrender/<directory>/<script>')
+@app.route('/pyrender/<directory>/<script>', methods=['GET', 'POST'])
 def render(directory, script):
     if directory not in ['exploit', 'fix', 'recognizer']:
         return ''
-    with open(directory+'/'+secure_filename(script), 'r') as f:
-        return render_template('pyrender.html', code=f.read())
+    if request.method == 'POST':
+        with open(directory+'/'+secure_filename(script), 'w') as f:
+            f.write(request.data.decode())
+        return 'success'
+    else:
+        with open(directory+'/'+secure_filename(script), 'r') as f:
+            return render_template('pyrender.html', code=f.read())
 
 
 if __name__ == '__main__':
