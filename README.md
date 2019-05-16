@@ -23,7 +23,7 @@
 
 赛前可在内网起一个小网页`python3 collaborate.py`来整理脚本  
 比赛前在robot机上只需要执行`python3 main.py`启动即可  
-请保证所有依赖都装好，框架自身没有依赖。  
+请保证所有依赖都装好，框架自身依赖请`pip3 install -r requirements.txt`。  
 每个脚本的行为应符合以下说明
 
 ## 对各部分的说明
