@@ -6,28 +6,33 @@ import subprocess
 import judge_utils
 import threading
 
-BRUTE = False  # 所有题把所有的exp和fix都试一遍
-DEBUG = True
-config = None
-
 with open('config.json', 'r') as f:
     config = json.loads(f.read())
-
+DEBUG = config['globals']['debug']
+BRUTE = config['globals']['brute']
+MATCH_FLAG = config['globals']['flag_match']
 api_base = config['api_base']
 vuls = config['vuls']
 reset_defend_after_fail = config['reset_env_after_fail_attempt']['defend']
 reset_attack_after_fail = config['reset_env_after_fail_attempt']['attack']
+
 correct_flags = []
-MATCH_FLAG = "flag{.*?}"
+
+fh = logging.FileHandler(
+    'logs/solver.log'
+)
+fh.setFormatter(
+    logging.Formatter(
+        '%(asctime)s [%(process)d-%(filename)s] %(levelname)s %(message)s'
+    )
+)
 log = logging.getLogger(__name__)
+log.addHandler(fh)
 coloredlogs.install(
     level='DEBUG',
     logger=log,
     fmt='%(asctime)s [%(process)d-%(filename)s] %(levelname)s %(message)s'
 )
-log.addHandler(logging.FileHandler(
-    'logs/main.log'
-))
 
 
 def exec_python(cmd, json_arg: str, pyver='python3'):
@@ -45,16 +50,16 @@ def try_exploit(question, vul):
         flags, exp_log = exec_python(exp, json.dumps(question))
         with open(f'logs/{exp.replace("/", "_")}.log', 'w') as f:
             f.write(exp_log)
+
         for flag in re.findall(MATCH_FLAG, flags):
-            if flag == "":
-                continue
+            print(flag)
             if flag in correct_flags:
                 log.warning(f'已经提交过{flag}')
                 continue
             if judge_utils.submit_flag(api_base, question, flag):
                 # logger
                 log.info(
-                    f'题目{judge_utils.describe_question(question)}攻击成功,flag为{flag}'
+                    f'题目{judge_utils.describe_question(question)}攻击成功,flag为{flag},利用脚本{exp}'
                 )
                 correct_flags.append(flag)
             else:
@@ -77,12 +82,12 @@ def try_fix(question, vul):
 
 
 def solve(i):
-    log.debug("题目信息:"+json.dumps(i, indent=4, sort_keys=True))
+    log.debug("开始解题: 题目"+judge_utils.describe_question(i))
     for j in vuls.keys():
         recon_output = exec_python(
             config['vuls'][j]['matcher'], json.dumps(i))[0]
         if not BRUTE and 'vulnerable' in recon_output:
-            log.info('找到了可能的漏洞点')
+            log.info(f'题目{judge_utils.describe_question(i)}找到了可能的漏洞点')
             if not DEBUG:
                 threading.Thread(target=try_exploit, args=(
                     i, config['vuls'][j])).start()
@@ -91,6 +96,17 @@ def solve(i):
             else:
                 try_exploit(i, config['vuls'][j])
                 try_fix(i, config['vuls'][j])
+
+
+def check_submit(flag, source):
+    if judge_utils.submit_flag(api_base, {}, flag):
+        # logger
+        log.info(
+            f'攻击成功,flag为{flag},来自{source}'
+        )
+        correct_flags.append(flag)
+    else:
+        log.warning(f'{flag[:10]}...答案错误')
 
 
 if __name__ == '__main__':

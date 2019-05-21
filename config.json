@@ -1,5 +1,11 @@
 {
     "contest": "rhg2019",
+    "globals":{
+        "debug": false,
+        "flag_match": "flag{.+}",
+        "brute": false,
+        "revsh_listen_port": 1234
+    },
     "api_base": "https://172.16.4.1/api",
     "reset_env_after_fail_attempt":{
         "attack": false,
