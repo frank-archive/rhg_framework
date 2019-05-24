@@ -47,7 +47,11 @@ def exec_python(cmd, json_arg: str, pyver='python3'):
 def try_exploit(question, vul):
     for exp in vul['exploit']:
         log.debug(f'开始尝试利用脚本{exp}进行攻击')
-        flags, exp_log = exec_python(exp, json.dumps(question))
+        pyver = 'python3'
+        with open(exp, 'r') as f:
+            if 'python2' in f.readline():
+                pyver = 'python2'
+        flags, exp_log = exec_python(exp, json.dumps(question), pyver=pyver)
         with open(f'logs/{exp.replace("/", "_")}.log', 'w') as f:
             f.write(exp_log)
 
@@ -69,7 +73,11 @@ def try_exploit(question, vul):
 def try_fix(question, vul):
     for i in vul['fix']:
         log.debug(f'开始尝试利用脚本{i}修复漏洞点')
-        stdout, fix_log = exec_python(i, json.dumps(question))
+        pyver = 'python3'
+        with open(i, 'r') as f:
+            if 'python2' in f.readline():
+                pyver = 'python2'
+        stdout, fix_log = exec_python(i, json.dumps(question), pyver=pyver)
         with open(f'logs/{i.replace("/", "_")}.log', 'w') as f:
             f.write(fix_log)
         if(stdout != ""):

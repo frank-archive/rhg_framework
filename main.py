@@ -16,16 +16,19 @@ solves = []
 if __name__ == '__main__':
     questions = judge_utils.get_questions(api_base)
     try:
-        for i in questions:
-            if DEBUG:
-                question_solver.solve(i)
-            else:
-                solves.append(
-                    threading.Thread(target=question_solver.solve,args=[i])
-                )
-                solves[-1].start()
-        for i in solves:
-            i.join()
+        while True:
+            for i in questions:
+                if DEBUG:
+                    question_solver.solve(i)
+                else:
+                    solves.append(
+                        threading.Thread(
+                            target=question_solver.solve, args=[i]
+                        )
+                    )
+                    solves[-1].start()
+            for i in solves:
+                i.join()
     except KeyboardInterrupt:
         'stopped'
     rev_shell_receiver.stop_thread = True
