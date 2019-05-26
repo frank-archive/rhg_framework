@@ -3,6 +3,9 @@ import judge_utils
 import question_solver
 import rev_shell_receiver
 import threading
+import zipfile
+import os
+import shutil
 
 with open('config.json', 'r') as f:
     config = json.loads(f.read())
@@ -13,7 +16,20 @@ revsh = threading.Thread(target=rev_shell_receiver.createSocket)
 revsh.start()
 solves = []
 
+def collect_logs():
+    i = 1
+    while os.path.exists(f'logs{i}.zip'):
+        i += 1
+    compressed_logs = zipfile.ZipFile(f'logs{i}.zip', 'w', zipfile.ZIP_DEFLATED)
+    for j in os.listdir('logs'):
+        compressed_logs.write('logs/'+j)
+    shutil.rmtree('logs')
+    os.mkdir('logs')
+    print(f'dumping logs to logs{i}.zip...')
+
 if __name__ == '__main__':
+    if os.path.exists('logs') == False:
+        os.mkdir('logs')
     questions = judge_utils.get_questions(api_base)
     try:
         while True:
@@ -31,5 +47,6 @@ if __name__ == '__main__':
                 i.join()
     except KeyboardInterrupt:
         'stopped'
+    collect_logs()
     rev_shell_receiver.stop_thread = True
     revsh.join()
