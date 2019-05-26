@@ -51,5 +51,8 @@ def main():
     revsh.join()
 
 if __name__ == '__main__':
-    while True:
-        main()
+    try:
+        while True:
+            main()
+    except KeyboardInterrupt:
+        exit(0)
