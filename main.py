@@ -27,26 +27,29 @@ def collect_logs():
     os.mkdir('logs')
     print(f'dumping logs to logs{i}.zip...')
 
-if __name__ == '__main__':
+def main():
     if os.path.exists('logs') == False:
         os.mkdir('logs')
     questions = judge_utils.get_questions(api_base)
     try:
-        while True:
-            for i in questions:
-                if DEBUG:
-                    question_solver.solve(i)
-                else:
-                    solves.append(
-                        threading.Thread(
-                            target=question_solver.solve, args=[i]
-                        )
+        for i in questions:
+            if DEBUG:
+                question_solver.solve(i)
+            else:
+                solves.append(
+                    threading.Thread(
+                        target=question_solver.solve, args=[i]
                     )
-                    solves[-1].start()
-            for i in solves:
-                i.join()
+                )
+                solves[-1].start()
+        for i in solves:
+            i.join()
     except KeyboardInterrupt:
         'stopped'
     collect_logs()
     rev_shell_receiver.stop_thread = True
     revsh.join()
+
+if __name__ == '__main__':
+    while True:
+        main()
