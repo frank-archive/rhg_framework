@@ -37,11 +37,15 @@ coloredlogs.install(
 
 def exec_python(cmd, json_arg: str, pyver='python3'):
     log.debug(f"执行{cmd}文件")
-    process = subprocess.run(
-        [pyver, cmd], input=json_arg.encode(),
-        capture_output=True
-    )
-    return process.stdout.decode(), process.stderr.decode()
+    try:
+        process = subprocess.run(
+            [pyver, cmd], input=json_arg.encode(),
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            timeout=10
+        )
+        return process.stdout.decode(), process.stderr.decode()
+    except:
+        return '',''
 
 
 def try_exploit(question, vul):
@@ -92,18 +96,15 @@ def try_fix(question, vul):
 def solve(i):
     log.debug("开始解题: 题目"+judge_utils.describe_question(i))
     for j in vuls.keys():
-        recon_output = exec_python(
-            config['vuls'][j]['matcher'], json.dumps(i))[0]
-        if not BRUTE and 'vulnerable' in recon_output:
-            log.info(f'题目{judge_utils.describe_question(i)}找到了可能的漏洞点')
-            if not DEBUG:
-                threading.Thread(target=try_exploit, args=(
-                    i, config['vuls'][j])).start()
-                threading.Thread(target=try_fix, args=(
-                    i, config['vuls'][j])).start()
-            else:
-                try_exploit(i, config['vuls'][j])
-                try_fix(i, config['vuls'][j])
+        log.info(f'开始打题目{judge_utils.describe_question(i)}')
+        if not DEBUG:
+            threading.Thread(target=try_exploit, args=(
+                i, config['vuls'][j])).start()
+            threading.Thread(target=try_fix, args=(
+                i, config['vuls'][j])).start()
+        else:
+            try_exploit(i, config['vuls'][j])
+            try_fix(i, config['vuls'][j])
 
 
 def check_submit(flag, source):
