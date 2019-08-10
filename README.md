@@ -21,7 +21,6 @@
 
 ## 使用说明
 
-赛前可在内网起一个小网页`python3 collaborate.py`来整理脚本  
 比赛前在robot机上只需要执行`python3 main.py`启动即可  
 请保证所有依赖都装好，框架自身依赖请`pip3 install -r requirements.txt`。  
 每个脚本的行为应符合以下说明
@@ -54,8 +53,7 @@ recognizer用于识别题目中是否含有对应的漏洞，同样以popen的�
 
 ### logs
 
-脚本运行生成的日志。对于每个脚本有单独的日志，也有合并的日志。  
-//TODO
+脚本运行生成的日志。对于每个脚本有单独的日志，也有合并的日志。
 
 ### static
 
